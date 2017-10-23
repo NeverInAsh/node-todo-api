@@ -4,10 +4,18 @@ const request = require('supertest');
 const {app} = require('./../server.js');
 const {toDolistDB} = require('./../models/todo.js');
 
+const todos = [{
+	text: 'First customary todo'
+},{
+	text: 'Second customary todo'
+}]
+
 //Clearing all the TODOs in the database 
 beforeEach((done)=>{
     // runs before each test in this block
-    toDolistDB.remove({}).then(() => done());
+    toDolistDB.remove({}).then(() => {
+    	return toDolistDB.insertMany(todos);
+    }).then(() => done());
   });
 
 describe('POST/todos', ()=>{
@@ -25,7 +33,7 @@ describe('POST/todos', ()=>{
 				done(err); // status not 200 and text not matching
 			}else{
 				//Assumptions on Database
-				toDolistDB.find().then((todos) =>{
+				toDolistDB.find({text}).then((todos) =>{
 					expect(todos.length).toBe(1);
 					expect(todos[0].text).toBe(text);
 					done();
@@ -46,7 +54,7 @@ describe('POST/todos', ()=>{
 				done(err);
 			}else{
 				toDolistDB.find().then((todos) =>{
-					expect(todos.length).toBe(0);
+					expect(todos.length).toBe(2);
 					done();
 				}).catch((e) => {
 					done(e);
@@ -55,4 +63,16 @@ describe('POST/todos', ()=>{
 		});		
 	});
 
+});
+
+describe('GET/todos', () =>{
+	it('should get all the todos', (done) =>{
+		request(app)
+		.get('/todos')
+		.expect(200)
+		.expect((res) =>{
+			expect(res.body.todos.length).toBe(2);
+		})
+		.end(done);//Since we r not doing anything asynchronously
+	});
 });

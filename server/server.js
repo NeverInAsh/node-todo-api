@@ -21,9 +21,9 @@ app.post('/todos',(req,res) =>{
 		res.status(200).send(doc);
 	},(err)=>{
 		res.status(400).send(err); //to be modified
-	})
+	});
 
-})
+});
 
 app.get('/todos', (req, res) =>{
 	toDolistDB.find().then((todos)=>{
@@ -32,9 +32,9 @@ app.get('/todos', (req, res) =>{
 		})
 	},(err)=>{
 		res.status(400).send(err);
-	})
+	});
 
-})
+});
 
 app.listen(3000,()=>{
 	
