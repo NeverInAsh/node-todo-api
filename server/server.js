@@ -25,6 +25,17 @@ app.post('/todos',(req,res) =>{
 
 })
 
+app.get('/todos', (req, res) =>{
+	toDolistDB.find().then((todos)=>{
+		res.status(200).send({
+			todos// send back all the todos
+		})
+	},(err)=>{
+		res.status(400).send(err);
+	})
+
+})
+
 app.listen(3000,()=>{
 	
 	console.log("Server up and running successfully on port 3000");
